@@ -1,0 +1,183 @@
+/* ═══════════════════════════════════════════════════════════════════
+   ANIMATIONS & REVEAL EFFECTS
+═══════════════════════════════════════════════════════════════════ */
+
+/* ─── REVEAL ON SCROLL ───────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s var(--ease),
+              transform 0.7s var(--ease);
+  will-change: opacity, transform;
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger children when parent reveals */
+.skills-grid .reveal:nth-child(2) { transition-delay: 0.08s; }
+.skills-grid .reveal:nth-child(3) { transition-delay: 0.16s; }
+.skills-grid .reveal:nth-child(4) { transition-delay: 0.24s; }
+.skills-grid .reveal:nth-child(5) { transition-delay: 0.32s; }
+.skills-grid .reveal:nth-child(6) { transition-delay: 0.40s; }
+
+.projects-grid .reveal:nth-child(2) { transition-delay: 0.1s; }
+.projects-grid .reveal:nth-child(3) { transition-delay: 0.2s; }
+.projects-grid .reveal:nth-child(4) { transition-delay: 0.3s; }
+
+.timeline .reveal:nth-child(2) { transition-delay: 0.12s; }
+.timeline .reveal:nth-child(3) { transition-delay: 0.24s; }
+
+/* ─── HERO ENTRY ANIMATIONS ──────────────────────────────────────── */
+.hero .hero-badge.reveal    { transition-delay: 0.1s; }
+.hero .hero-title.reveal    { transition-delay: 0.2s; }
+.hero .hero-subtitle.reveal { transition-delay: 0.35s; }
+.hero .hero-description.reveal { transition-delay: 0.45s; }
+.hero .hero-cta.reveal      { transition-delay: 0.55s; }
+.hero .hero-social.reveal   { transition-delay: 0.65s; }
+
+/* ─── PAGE-IN ANIMATION (after loader) ───────────────────────────── */
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body.loaded main {
+  animation: pageIn 0.8s var(--ease) forwards;
+}
+
+/* ─── FLOATING ANIMATION ─────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+
+/* ─── SKILL BAR ANIMATION ────────────────────────────────────────── */
+.skill-card.revealed .skill-bar {
+  /* width set dynamically via JS from data-level */
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+}
+
+/* ─── COUNTER ANIMATION ──────────────────────────────────────────── */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.counter.counting {
+  animation: countUp 0.3s var(--ease) forwards;
+}
+
+/* ─── TAB SWITCH ANIMATION ───────────────────────────────────────── */
+.tab-panel {
+  animation: tabIn 0.35s var(--ease) forwards;
+}
+
+@keyframes tabIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── TIMELINE SLIDE-IN ──────────────────────────────────────────── */
+.timeline-item.revealed .timeline-card {
+  animation: slideRight 0.5s var(--ease) forwards;
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── BUTTON SHINE EFFECT ────────────────────────────────────────── */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.18),
+    transparent
+  );
+  transition: left 0.5s var(--ease);
+}
+
+.btn-primary:hover::before {
+  left: 150%;
+}
+
+/* ─── CARD HOVER GLOW ────────────────────────────────────────────── */
+.project-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-xl);
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(99,102,241,0.06),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity var(--dur-mid);
+  pointer-events: none;
+}
+
+.project-card:hover::after { opacity: 1; }
+
+/* ─── GRADIENT TEXT SHIMMER ──────────────────────────────────────── */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.section-title {
+  background-size: 200% auto;
+  animation: gradientShift 6s ease infinite;
+}
+
+/* ─── FOCUS RING PULSE ───────────────────────────────────────────── */
+@keyframes focusPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(99,102,241,0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(99,102,241,0.15); }
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  animation: focusPulse 1.5s ease-in-out infinite;
+}
+
+/* ─── PREFERS REDUCED MOTION ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
