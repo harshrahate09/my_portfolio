@@ -10,41 +10,77 @@
 const $  = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 
-/* ─── LOADER ─────────────────────────────────────────────────────── */
+/* ─── LOADER — SCRAMBLE REVEAL ───────────────────────────────────── */
 (function initLoader() {
-  const loader   = $('#loader');
-  const progress = $('#loaderProgress');
-  const text     = $('#loaderText');
+  const loader  = $('#loader');
+  const line    = $('#loaderLine');
+  const sub     = $('#loaderSub');
 
-  const messages = [
-    'Compiling assets…',
-    'Loading modules…',
-    'Bootstrapping UI…',
-    'Almost there…',
-    'Welcome 🚀',
-  ];
+  const WORDS   = ['HARSH', 'RAHATE'];
+  const IDS     = ['scrambleWord1', 'scrambleWord2'];
 
-  let pct = 0;
-  let msgIdx = 0;
+  // Characters to scramble through — alphanumeric + a few symbols for flair
+  const POOL    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
+  const rand    = () => POOL[Math.floor(Math.random() * POOL.length)];
 
-  const interval = setInterval(() => {
-    pct += Math.random() * 22 + 8;
-    if (pct >= 100) pct = 100;
+  // Build letter <span>s for each word
+  const letterEls = WORDS.map((word, wi) => {
+    const container = document.getElementById(IDS[wi]);
+    return [...word].map(ch => {
+      const span = document.createElement('span');
+      span.className = 'loader-letter';
+      span.textContent = rand();
+      span.dataset.target = ch;
+      container.appendChild(span);
+      return span;
+    });
+  });
 
-    progress.style.width = pct + '%';
-    text.textContent = messages[Math.min(msgIdx, messages.length - 1)];
-    msgIdx++;
+  // Flatten all letters with their staggered resolve time
+  const allLetters = letterEls.flat();
+  const totalLetters = allLetters.length;
 
-    if (pct >= 100) {
-      clearInterval(interval);
-      setTimeout(() => {
-        loader.classList.add('loaded');
-        document.body.classList.add('loaded');
-        // Trigger hero reveals now
-        $$('.hero .reveal').forEach(el => el.classList.add('revealed'));
-      }, 400);
-    }
-  }, 220);
+  // Each letter resolves one by one, with a small random jitter
+  const BASE_DELAY     = 80;   // ms between each letter resolving
+  const SCRAMBLE_TICKS = 6;    // how many random frames before it locks
+  const TICK_INTERVAL  = 50;   // ms per scramble frame
+
+  let resolvedCount = 0;
+
+  allLetters.forEach((span, i) => {
+    const resolveAt = i * BASE_DELAY + Math.random() * 40;
+
+    // Keep scrambling until it's time to resolve
+    const scrambleTimer = setInterval(() => {
+      if (!span.classList.contains('resolved')) {
+        span.textContent = rand();
+      }
+    }, TICK_INTERVAL);
+
+    setTimeout(() => {
+      clearInterval(scrambleTimer);
+      span.textContent = span.dataset.target;
+      span.classList.add('resolved');
+      resolvedCount++;
+
+      if (resolvedCount === totalLetters) onAllResolved();
+    }, resolveAt + SCRAMBLE_TICKS * TICK_INTERVAL);
+  });
+
+  function onAllResolved() {
+    // 1. Grow the underline
+    setTimeout(() => line.classList.add('grow'), 100);
+
+    // 2. Fade in subtitle
+    setTimeout(() => sub.classList.add('show'), 300);
+
+    // 3. Dismiss loader and start the page
+    setTimeout(() => {
+      loader.classList.add('loaded');
+      document.body.classList.add('loaded');
+      $$('.hero .reveal').forEach(el => el.classList.add('revealed'));
+    }, 1100);
+  }
 })();
 
 /* ─── CUSTOM CURSOR ──────────────────────────────────────────────── */

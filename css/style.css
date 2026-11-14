@@ -144,8 +144,8 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 9998;
-  transition: opacity var(--dur-slow) var(--ease),
-              visibility var(--dur-slow);
+  transition: opacity 0.9s var(--ease),
+              visibility 0.9s;
 }
 
 .loader.loaded {
@@ -159,41 +159,73 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 
-.loader-logo {
-  font-size: 3.5rem;
+/* Two-word name block */
+.loader-scramble {
+  display: flex;
+  gap: 0.6em;
+  line-height: 1;
+}
+
+.loader-word {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: clamp(2.8rem, 10vw, 7rem);
   font-weight: 900;
+  letter-spacing: -0.02em;
   background: var(--gradient-hero);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -2px;
+  min-width: 1ch;
+  white-space: nowrap;
 }
 
-.loader-bar {
-  width: 200px;
+/* individual letter spans injected by JS */
+.loader-letter {
+  display: inline-block;
+  -webkit-text-fill-color: transparent;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.25;
+  transition: opacity 0.08s linear;
+}
+
+.loader-letter.resolved {
+  opacity: 1;
+}
+
+/* underline that grows left → right after name resolves */
+.loader-line {
+  width: 0;
   height: 2px;
-  background: var(--surface-2);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.loader-progress {
-  height: 100%;
-  width: 0%;
   background: var(--gradient-hero);
   border-radius: 2px;
-  transition: width 0.05s linear;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.loader-text {
+.loader-line.grow {
+  width: min(480px, 80vw);
+}
+
+/* subtle subtitle */
+.loader-sub {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-3);
-  letter-spacing: 2px;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
+  color: var(--text-3);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+
+.loader-sub.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ─── NAVIGATION ─────────────────────────────────────────────────── */
